@@ -27,9 +27,8 @@ char* read_sys_info(const char* f_path, uint32_t string_size)
     // Opening file
     int file_d = open(f_path, O_RDONLY); // File descriptor
     if (file_d < 0) { 
-        perror("r1"); 
-        exit(1);
-        return "";
+        perror("r1"); // Message error print
+        exit(1); // Program ended with error (return)
     }
 
     size_t data_size = string_size / 8;
@@ -40,7 +39,6 @@ char* read_sys_info(const char* f_path, uint32_t string_size)
     if (close(file_d) < 0) { 
         perror("c1"); 
         exit(1);
-        return "";
     } 
 
     return info;
@@ -49,4 +47,9 @@ char* read_sys_info(const char* f_path, uint32_t string_size)
 char* version_info()
 {
     return read_sys_info("/proc/version", 2048);
+}
+
+char* memory_info()
+{
+    return read_sys_info("/proc/meminfo", 4098);
 }
