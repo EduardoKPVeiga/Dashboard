@@ -1,15 +1,11 @@
-import ctypes
-
-_sys = ctypes.CDLL("./sys_call.so")
-_sys.version_info.restype = ctypes.c_char_p;
-_sys.memory_info.restype = ctypes.c_char_p;
+import decode
 
 def main():
-    global _sys
-    var = _sys.version_info()
-    print("version info: ", var);
-    var = _sys.memory_info();
-    print("Memory info: ", var);
+    process_list = decode.read_dir()
+    for proc in process_list:
+        for item in proc:
+            print(item)
+        print("\n")
 
 if __name__ == "__main__":
     main()
