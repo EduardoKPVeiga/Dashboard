@@ -29,9 +29,8 @@ SYSTEMCALLS:
 #include <dirent.h>
 #include <libgen.h>
 #include <string.h>
-
-#define VERSION_INFO_SIZE 2 * 1024
-#define MEMORY_INFO_SIZE 16 * 1024
+#include <sys/times.h>
+#include <time.h>
 
 extern int errno;
 
@@ -99,12 +98,7 @@ char* read_sys_info(const char* f_path, uint32_t string_size)
     return info;
 }
 
-char* version_info()
+uint64_t clk_per_second()
 {
-    return read_sys_info("/proc/version", VERSION_INFO_SIZE);
-}
-
-char* memory_info()
-{
-    return read_sys_info("/proc/meminfo", MEMORY_INFO_SIZE);
+    return (uint64_t)sysconf(_SC_CLK_TCK);
 }
