@@ -1,0 +1,26 @@
+    Permissões (Mode):
+        Um conjunto de 10 caracteres que mostra as permissões do arquivo/diretório.
+        O primeiro caractere indica o tipo de arquivo 
+        (- para arquivo, d para diretório, l para link simbólico, etc.).
+        Os nove caracteres seguintes estão divididos em três grupos de três,
+        indicando permissões de leitura (r), escrita (w), 
+        e execução (x) para o proprietário, o grupo, e outros usuários.
+    
+    Número de links (Links):
+        O número de links físicos (hard links) para o arquivo ou o número de subdiretórios e arquivos contidos no diretório.
+
+    Proprietário (Owner):
+        O nome do usuário que possui o arquivo/diretório.
+
+    Grupo (Group):  
+        O nome do grupo que possui o arquivo/diretório.
+
+    Tamanho (Size):
+        O tamanho do arquivo. Com a opção -h, o tamanho é exibido em formato legível (por exemplo, 4.0K, 2.1M).
+
+    Data e hora da última modificação (Last Modified):
+        A data e a hora da última modificação do arquivo/diretório.
+
+    Nome do arquivo/diretório (Name):
+        O nome do arquivo ou diretório. Se for um link simbólico, ele também mostra o caminho do destino do link.
+
