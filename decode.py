@@ -1,4 +1,5 @@
 import ctypes
+import time
 
 global _sys
 _sys = ctypes.CDLL("./sys_call.so")
@@ -48,7 +49,7 @@ def read_dir_d():
             result_v_process.append(item)
 
     # Search for process name
-    return read_process_names(result_v_process)
+    return process_names_d(result_v_process)
 
 def process_names_d(list_proc: list):
     result = ""
@@ -73,6 +74,20 @@ def process_names_d(list_proc: list):
     return process
 
 def cpu_usage_d():
+    cpu_usage_prev = cpu_usage_since_boot_d()
+    time.sleep(0.5)
+    cpu_usage_actual = cpu_usage_since_boot_d()
+    
+    cpu_usage = []
+
+    for i in range(len(cpu_usage_actual)):
+        cpu_usage_value = (cpu_usage_actual[i][1] - cpu_usage_prev[i][1]) / (cpu_usage_actual[i][2] - cpu_usage_prev[i][2])
+        cpu_usage_value = (1 - cpu_usage_value) * 100
+        cpu_usage.append([cpu_usage_actual[i][0], cpu_usage_value])
+
+    return cpu_usage
+
+def cpu_usage_since_boot_d():
     cpu_usage = (_sys.read_sys_info("/proc/stat".encode('utf-8'), (4 * 1024))).decode('utf-8')
     cpu_usage_list = cpu_usage.split("\n")
     cpu_usage_matrix = []
@@ -89,12 +104,10 @@ def cpu_usage_d():
     system_uptime = system_uptime_s.split(" ")
 
     cpu_usage_calc = []
-    cpu_usage_perc = 0
     for line in cpu_usage_matrix:
         total_time = 0
         for i in range(1,8):
             total_time += int(line[i])
-        cpu_usage_perc = (1 - int(line[4]) / total_time) * 100
-        cpu_usage_calc.append([line[0], cpu_usage_perc])
+        cpu_usage_calc.append([line[0], int(line[4]), total_time])
 
     return cpu_usage_calc
