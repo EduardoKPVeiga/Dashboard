@@ -55,17 +55,17 @@ def read_process_names(list_proc: list):
     for proc in list_proc:
         result = _sys.read_sys_info((path + proc + "/status").encode('utf-8'), (16 * 1024))
         result_string = result.decode('utf-8')
-        
+
         # List with the information of a single process
-        process_list_string = result_string.split("\n")
+        process_list_items = result_string.split("\n")
 
         # Matrix with the information of a single process
-        process_list_items = []
+        process_matrix_items = []
 
-        for process_item in process_list_string:
+        for process_item in process_list_items:
             # Split only in the first occurrence
-            process_list_items.append(remove(process_item, "\t").split(":", 1)) # Because some names may have ':' in them
+            process_matrix_items.append(remove(process_item, "\t").split(":", 1)) # Because some names may have ':' in them
 
-        process.append(process_list_items)
+        process.append(process_matrix_items)
 
     return process
