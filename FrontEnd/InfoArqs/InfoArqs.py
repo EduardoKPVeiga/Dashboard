@@ -7,7 +7,6 @@ class InfoArqs:
         
         # Cria a tabela
         self.tabela = ttk.Treeview(janela, columns=('Mode', 'Links', 'Owner', 'Group', 'Size', 'Last Modified', 'Name'))
-        self.tabela.heading('#0', text='Linha')
         self.tabela.heading('Mode', text='Mode')
         self.tabela.heading('Links', text='Links')
         self.tabela.heading('Owner', text='Owner')
@@ -45,10 +44,7 @@ class InfoArqs:
             self.atualizar_tabela(diretorio)
 
     def atualizar_tabela(self, diretorio):
-        # Atualiza os dados da tabela com base no diretório selecionado
-        comando_ls = f"ls -lh {diretorio}"
-        self.dados = interpretador.directory_info_py_to_dictionary(interpretador, comando_ls) # ->
-
+        self.dados = interpretador.directory_info_py_to_dictionary(interpretador, diretorio) # -vai receber isso?
         # Limpa itens anteriores da tabela
         for item in self.tabela.get_children():
             self.tabela.delete(item)
@@ -59,6 +55,7 @@ class InfoArqs:
             if var == 1:
                 var = 0
                 continue
+            print(f"chave: {chave} detalhes: {detalhes}")
             self.tabela.insert('', 'end', text=chave, values=(
                 detalhes['Mode'],
                 detalhes['Links'],
@@ -66,7 +63,8 @@ class InfoArqs:
                 detalhes['Group'],
                 detalhes['Size'],
                 detalhes['Last Modified'],
-                detalhes['Name']
+                detalhes['Name'],
+                
             ))
 
     def alterar_diretorio(self, novo_diretorio):

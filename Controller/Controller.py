@@ -11,5 +11,8 @@ class Controller:
         self.dash = Menu(self.Menu)
         self.Menu.mainloop()
 
-
+    # def Atualizando_Dados():
+    #     thread1 = threading.Thread(target=self.dados.buscaProcessos)
+        
+    #     thread1.start()
 
