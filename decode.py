@@ -1,15 +1,17 @@
 import ctypes
-import time
 
 global _sys
 _sys = ctypes.CDLL("./sys_call.so")
 
+# Read the pseudo filesystem
 _sys.read_sys_info.restype = ctypes.c_char_p
 _sys.read_sys_info.argtypes = [ctypes.c_char_p, ctypes.c_uint32]
 
+# Read the pseudo filesystem and subdirectories
 _sys.read_dir_info.restype = ctypes.c_char_p
 _sys.read_dir_info.argtypes = [ctypes.c_char_p]
 
+# CPU clock per second
 _sys.clk_per_second.restype = ctypes.c_uint64
 
 def clk_per_second_d():
@@ -19,9 +21,8 @@ def remove(string, char):
     return string.replace(char, "")
 
 def memory_info_d():
-    result = _sys.read_sys_info("/proc/meminfo".encode('utf-8'), (16 * 1024))
-    result_string = result.decode('utf-8')
-    result_v = result_string.split("\n")
+    result = (_sys.read_sys_info("/proc/meminfo".encode('utf-8'), (16 * 1024))).decode('utf-8')
+    result_v = result.split("\n")
     result_m = []
 
     for line in result_v:
@@ -31,11 +32,9 @@ def memory_info_d():
     return result_m
 
 def version_info_d():
-    result = _sys.read_sys_info("/proc/version", 2 * 1024)
-    result_string = result.decode('utf-8')
-    return result_string
+    return (_sys.read_sys_info("/proc/version", 2 * 1024)).decode('utf-8')
 
-def read_dir_d():
+def read_proc_ids_d():
     result = (_sys.read_dir_info("/proc/".encode('utf-8'))).decode('utf-8')
     
     result_v = []
@@ -48,15 +47,17 @@ def read_dir_d():
         if item.isnumeric() == True:
             result_v_process.append(item)
 
-    # Search for process name
-    return process_names_d(result_v_process)
+    return result_v_process
 
-def process_names_d(list_proc: list):
+# Used with the read_proc_id_d() function
+def process_status_d():
     result = ""
     process = []
     path = "/proc/"
 
-    for proc in list_proc:
+    proc_id_list = read_proc_ids_d()
+
+    for proc in proc_id_list:
         result = (_sys.read_sys_info((path + proc + "/status").encode('utf-8'), (16 * 1024))).decode('utf-8')
 
         # List with the information of a single process
@@ -73,19 +74,9 @@ def process_names_d(list_proc: list):
 
     return process
 
-def cpu_usage_d():
-    cpu_usage_prev = cpu_usage_since_boot_d()
-    time.sleep(0.5)
-    cpu_usage_actual = cpu_usage_since_boot_d()
-    
-    cpu_usage = []
+def proc_info_d(): # incompleta
+    proc_status = process_status_d()
 
-    for i in range(len(cpu_usage_actual)):
-        cpu_usage_value = (cpu_usage_actual[i][1] - cpu_usage_prev[i][1]) / (cpu_usage_actual[i][2] - cpu_usage_prev[i][2])
-        cpu_usage_value = (1 - cpu_usage_value) * 100
-        cpu_usage.append([cpu_usage_actual[i][0], cpu_usage_value])
-
-    return cpu_usage
 
 def cpu_usage_since_boot_d():
     cpu_usage = (_sys.read_sys_info("/proc/stat".encode('utf-8'), (4 * 1024))).decode('utf-8')
@@ -111,3 +102,22 @@ def cpu_usage_since_boot_d():
         cpu_usage_calc.append([line[0], int(line[4]), total_time])
 
     return cpu_usage_calc
+
+def proc_memory_usage_d():
+    process_list = process_status_d()
+    process_mem_usage_list = []
+
+    # Add all process' names
+    for proc in process_list:
+        proc_mem = []
+        proc_mem.append(proc[0][1])
+
+        # Add only process name and memory usage
+        for item in proc:
+            if (item[0] == "VmSize"):
+                proc_mem.append(remove(item[1], " "))
+                break
+
+        process_mem_usage_list.append(proc_mem)
+    
+    return process_mem_usage_list
