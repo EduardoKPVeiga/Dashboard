@@ -195,6 +195,11 @@ class interpretador():
         return informacoes_importantes
 
     def list_proc_running_sysinfo(self):
+        """Função que vai listar os processos rodando atualmente
+
+        Returns:
+            lista: processos rodando atualmente
+        """
         # Read subdirectories
         process_list = self.process_status_d(self)
         process_names_list = []
@@ -296,8 +301,8 @@ def main ():
     # print("process_status_d:", interpretador.filtrando_dados_process(primeiros_10_itens))
     # print("cpu_usage_since_boot_d:", interpretador.cpu_usage_since_boot_d())
     # print("interpretador.proc_memory_usage_d:", interpretador.proc_memory_usage_d(interpretador))
-    # print("list_proc_running_sysinfo:", interpretador.list_proc_running_sysinfo(interpretador))
-    print("cpu_usage_sysinfo:", interpretador.cpu_usage_sysinfo(interpretador)) # uso do processador 2.
+    print("list_proc_running_sysinfo:", interpretador.list_proc_running_sysinfo(interpretador))
+    # print("cpu_usage_sysinfo:", interpretador.cpu_usage_sysinfo(interpretador)) # uso do processador 2.
     # print("proc_info_sysinfo:", interpretador.proc_info_sysinfo(interpretador))
     # print("qtd_proc_running_sysinfo:", interpretador.qtd_proc_running_sysinfo(interpretador))
     # print("qtd_threads_running:", interpretador.qtd_threads_running(interpretador))

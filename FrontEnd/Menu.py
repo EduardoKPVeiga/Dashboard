@@ -7,6 +7,7 @@ from FrontEnd.MemInfo.MemInfo import MemInfo
 from FrontEnd.ProcessInfo.ProcessInfo import ProcessInfo
 from FrontEnd.InfoProcessador.InfoProcessador import InfoProcessador
 
+
 class Menu:
     def __init__(self, janela):
         self.janela = janela
@@ -24,6 +25,7 @@ class Menu:
         menu_bar.add_command(label="Mem Infos", command=self.mostrar_mem_infos)
         menu_bar.add_command(label="Process Infos", command=self.mostrar_process_infos)
         menu_bar.add_command(label="Info Processador", command=self.mostrar_info_processador)
+        
         
         
         # mostrar_info_processador
