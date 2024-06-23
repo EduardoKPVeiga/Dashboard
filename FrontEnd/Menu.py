@@ -3,7 +3,7 @@ import tkinter as tk
 import threading
 from FrontEnd.InfoArqs.InfoArqs import InfoArqs
 from FrontEnd.InfoSistema.InfoSistema import InfoSistema
-
+from FrontEnd.MemInfo.MemInfo import MemInfo
 
 
 class Menu:
@@ -20,6 +20,8 @@ class Menu:
         menu_bar = tk.Menu(self.janela)
         menu_bar.add_command(label="Infos Arquivos", command=self.mostrar_infos_arquivos)
         menu_bar.add_command(label="Infos Sistmema", command=self.mostrar_infos_sistema)
+        menu_bar.add_command(label="Mem Infos", command=self.mostrar_mem_infos)
+        
         # Configura a barra de menu na janela principal
         self.janela.config(menu=menu_bar)
         self.content_label.pack_forget()
@@ -37,6 +39,11 @@ class Menu:
     def mostrar_infos_sistema(self):
         self.apagar_elementos()
         thread = threading.Thread(target=lambda: InfoSistema(self.janela))
+        thread.start()
+        
+    def mostrar_mem_infos(self):
+        self.apagar_elementos()
+        thread = threading.Thread(target=lambda: MemInfo(self.janela))
         thread.start()
         
     

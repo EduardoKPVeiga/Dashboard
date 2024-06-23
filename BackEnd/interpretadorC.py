@@ -8,28 +8,28 @@ class interpretador():
     def __init__(self):
         # _sys = ctypes.CDLL("./BackEnd/Arquivos_C/sys_call.so")  
         
-        _sys.memory_info.restype = ctypes.c_char_p
         _sys.directory_info.restype = ctypes.c_char_p
         
         _sys.read_sys_info.restype = ctypes.c_char_p
         _sys.read_sys_info.argtypes = [ctypes.c_char_p, ctypes.c_uint32]
         # Read the pseudo filesystem and subdirectories
-        _sys.read_dir_info.restype = ctypes.c_char_p
-        _sys.read_dir_info.argtypes = [ctypes.c_char_p]
+        
         # CPU clock per second
-        _sys.clk_per_second.restype = ctypes.c_uint64
         
 
         
         
     
     def clk_per_second_d():
+        _sys.clk_per_second.restype = ctypes.c_uint64
         return _sys.clk_per_second()
         
     def remove(string, char):
         return string.replace(char, "")
     
     def memory_info_d(self):
+        _sys.read_sys_info.restype = ctypes.c_char_p
+        _sys.read_sys_info.argtypes = [ctypes.c_char_p, ctypes.c_uint32]
         result = (_sys.read_sys_info("/proc/meminfo".encode('utf-8'), (16 * 1024))).decode('utf-8')
         result_v = result.split("\n")
         result_m = []
@@ -45,6 +45,8 @@ class interpretador():
         return _sys.version_info()
     
     def read_proc_ids_d():
+        _sys.read_dir_info.restype = ctypes.c_char_p
+        _sys.read_dir_info.argtypes = [ctypes.c_char_p]
         result = (_sys.read_dir_info("/proc/".encode('utf-8'))).decode('utf-8')
         
         result_v = []
@@ -60,11 +62,14 @@ class interpretador():
         return result_v_process
 
     def process_status_d(self):
+        _sys.read_sys_info.restype = ctypes.c_char_p
+        _sys.read_sys_info.argtypes = [ctypes.c_char_p, ctypes.c_uint32]
         result = ""
         process = []
         path = "/proc/"
 
-        proc_id_list = self.read_proc_ids_d(self)
+        proc_id_list = self.read_proc_ids_d() # tem que colocar aqui tbm
+
 
         for proc in proc_id_list:
             result = (_sys.read_sys_info((path + proc + "/status").encode('utf-8'), (16 * 1024))).decode('utf-8')
@@ -84,6 +89,8 @@ class interpretador():
         return process
     
     def cpu_usage_since_boot_d():
+        _sys.read_sys_info.restype = ctypes.c_char_p
+        _sys.read_sys_info.argtypes = [ctypes.c_char_p, ctypes.c_uint32]
         cpu_usage = (_sys.read_sys_info("/proc/stat".encode('utf-8'), (4 * 1024))).decode('utf-8')
         cpu_usage_list = cpu_usage.split("\n")
         cpu_usage_matrix = []
@@ -168,8 +175,17 @@ class interpretador():
 
 
 def main ():
-    interpretador.version_info_d(interpretador)
-    print("interpretador.versionInfo:", interpretador.versionInfo)
+    # print("clk_per_second_d:", interpretador.clk_per_second_d())
+    # print("memory_info_d:", interpretador.memory_info_d(interpretador))
+    # print("version_info_d:", interpretador.version_info_d())
+    # print("read_proc_ids_d:", interpretador.read_proc_ids_d())
+    lista = interpretador.process_status_d(interpretador)
+    # Pegar os 10 primeiros itens
+    primeiros_10_itens = lista[:10]
+    print("process_status_d:", primeiros_10_itens)
+    # print("cpu_usage_since_boot_d:", interpretador.cpu_usage_since_boot_d())
+    # print("interpretador.proc_memory_usage_d:", interpretador.proc_memory_usage_d(interpretador))
+    
     
 if __name__ == "__main__":
     main ()
