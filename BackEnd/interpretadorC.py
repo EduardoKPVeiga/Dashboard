@@ -1,5 +1,5 @@
 import ctypes
-
+import time
 _sys = ctypes.CDLL("./BackEnd/Arquivos_C/sys_call.so")  
 
 class interpretador():
@@ -173,18 +173,103 @@ class interpretador():
         var = self.directory_info_py(comando)
         return self.arquivo_para_dicionario(var)
 
+    def filtrando_dados_process(arry_process):
+        """
+        Retorna um dicionario com as informações mais importantes da função proces_status
 
+        Args:
+            arry_process (lista): lista dos elementos do process_status
+
+        Returns:
+            lista: retorna uma lista de dicionarios dos elementos
+        """
+        informacoes_importantes = []
+        for processo in arry_process:
+            info_processo = {}
+            for atributo in processo:
+                if len(atributo) == 2:  # Verifica se atributo é uma tupla de dois elementos
+                    chave, valor = atributo
+                    if chave in ['Name', 'State', 'Pid', 'PPid', 'Uid', 'Gid', 'VmSize', 'VmRSS', 'Threads', 'voluntary_ctxt_switches', 'nonvoluntary_ctxt_switches']:
+                        info_processo[chave] = valor
+            informacoes_importantes.append(info_processo)
+        return informacoes_importantes
+
+    def list_proc_running_sysinfo(self):
+        # Read subdirectories
+        process_list = self.process_status_d(self)
+        process_names_list = []
+
+        # Add all process' names
+        for proc in process_list:
+            process_names_list.append(proc[0][1])
+
+        return process_names_list
+        
+    def cpu_usage_sysinfo(self):
+        cpu_usage_prev = self.cpu_usage_since_boot_d()
+        time.sleep(0.5)
+        cpu_usage_actual = self.cpu_usage_since_boot_d()
+        
+        cpu_usage = []
+    
+        # Convert to %
+        for i in range(len(cpu_usage_actual)):
+            cpu_usage_value = (cpu_usage_actual[i][1] - cpu_usage_prev[i][1]) / (cpu_usage_actual[i][2] - cpu_usage_prev[i][2])
+            cpu_usage_value = (1 - cpu_usage_value) * 100
+            cpu_usage.append([cpu_usage_actual[i][0], cpu_usage_value])
+
+        return cpu_usage       
+
+    def proc_info_sysinfo(self):
+        proc_status = self.process_status_d(self)
+
+        proc_info = []
+
+        # Extract the information from 'status'
+        for proc in proc_status:
+            data = []
+            for item in proc:
+                if item[0] == "Name" or item[0] == "State" or item[0] == "Tgid" or item[0] == "VmSize" or item[0] == "Threads":
+                    if item[0] == "VmSize":
+                        data.append([item[0], self.remove(item[1], " ")])
+                    else:
+                        data.append([item[0], item[1]])
+            proc_info.append(data)
+
+        #[[["Name", "Name1"], ["State", "State1"], ["Tgid", "ID1"], ["VmSize", "VmSize1"], ["Threads", "Threads1"]], ... , [["Name", "NameN"], ["State", "StateN"], ["Tgid", "IDN"], ["VmSize", "VmSizeN"], hreads", "ThreadsN"]]]
+        return proc_info
+
+    def qtd_proc_running_sysinfo(self):
+        return len(self.list_proc_running_sysinfo(self))
+
+    def qtd_threads_running(self):
+        total_threads = 0
+        proc_info = self.proc_info_sysinfo(self)
+
+        # Search for "Thread" atribute
+        for proc in proc_info:
+            for item in proc:
+                if item[0] == "Threads":
+                    total_threads += int(item[1])
+
+        return total_threads
+    
 def main ():
     # print("clk_per_second_d:", interpretador.clk_per_second_d())
     # print("memory_info_d:", interpretador.memory_info_d(interpretador))
     # print("version_info_d:", interpretador.version_info_d())
     # print("read_proc_ids_d:", interpretador.read_proc_ids_d())
-    lista = interpretador.process_status_d(interpretador)
-    # Pegar os 10 primeiros itens
-    primeiros_10_itens = lista[:10]
-    print("process_status_d:", primeiros_10_itens)
+    # lista = interpretador.process_status_d(interpretador)
+    # primeiros_10_itens = lista[:2]
+    # print("process_status_d:", interpretador.filtrando_dados_process(primeiros_10_itens))
     # print("cpu_usage_since_boot_d:", interpretador.cpu_usage_since_boot_d())
     # print("interpretador.proc_memory_usage_d:", interpretador.proc_memory_usage_d(interpretador))
+    # print("list_proc_running_sysinfo:", interpretador.list_proc_running_sysinfo(interpretador))
+    # print("cpu_usage_sysinfo:", interpretador.cpu_usage_sysinfo(interpretador))
+    print("proc_info_sysinfo:", interpretador.proc_info_sysinfo(interpretador))
+    # print("qtd_proc_running_sysinfo:", interpretador.qtd_proc_running_sysinfo(interpretador))
+    # print("qtd_threads_running:", interpretador.qtd_threads_running(interpretador))
+    
     
     
 if __name__ == "__main__":

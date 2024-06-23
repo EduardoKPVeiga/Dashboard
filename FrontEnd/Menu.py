@@ -4,6 +4,7 @@ import threading
 from FrontEnd.InfoArqs.InfoArqs import InfoArqs
 from FrontEnd.InfoSistema.InfoSistema import InfoSistema
 from FrontEnd.MemInfo.MemInfo import MemInfo
+from FrontEnd.ProcessInfo.ProcessInfo import ProcessInfo
 
 
 class Menu:
@@ -21,6 +22,8 @@ class Menu:
         menu_bar.add_command(label="Infos Arquivos", command=self.mostrar_infos_arquivos)
         menu_bar.add_command(label="Infos Sistmema", command=self.mostrar_infos_sistema)
         menu_bar.add_command(label="Mem Infos", command=self.mostrar_mem_infos)
+        menu_bar.add_command(label="Process Infos", command=self.mostrar_process_infos)
+        
         
         # Configura a barra de menu na janela principal
         self.janela.config(menu=menu_bar)
@@ -44,6 +47,11 @@ class Menu:
     def mostrar_mem_infos(self):
         self.apagar_elementos()
         thread = threading.Thread(target=lambda: MemInfo(self.janela))
+        thread.start()
+        
+    def mostrar_process_infos(self):
+        self.apagar_elementos()
+        thread = threading.Thread(target=lambda: ProcessInfo(self.janela))
         thread.start()
         
     
