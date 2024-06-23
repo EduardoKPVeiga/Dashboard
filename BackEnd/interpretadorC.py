@@ -206,21 +206,43 @@ class interpretador():
         return process_names_list
         
     def cpu_usage_sysinfo(self):
+        """Função que transforma lista de dados do processador uma lista de dicionarios
+
+        Returns:
+            lista: [{'Processador':'cpu', 'Usando':'33%', 'Ocioso': '66%'} ...]
+        """
         cpu_usage_prev = self.cpu_usage_since_boot_d()
         time.sleep(0.5)
         cpu_usage_actual = self.cpu_usage_since_boot_d()
         
         cpu_usage = []
-    
-        # Convert to %
-        for i in range(len(cpu_usage_actual)):
-            cpu_usage_value = (cpu_usage_actual[i][1] - cpu_usage_prev[i][1]) / (cpu_usage_actual[i][2] - cpu_usage_prev[i][2])
-            cpu_usage_value = (1 - cpu_usage_value) * 100
-            cpu_usage.append([cpu_usage_actual[i][0], cpu_usage_value])
 
-        return cpu_usage       
+        for i in range(len(cpu_usage_actual)):
+            user_diff = cpu_usage_actual[i][1] - cpu_usage_prev[i][1]
+            system_diff = cpu_usage_actual[i][2] - cpu_usage_prev[i][2]
+            total_diff = user_diff + system_diff
+            
+            if total_diff > 0:
+                percent_usando = (user_diff / total_diff) * 100
+                percent_ocioso = 100 - percent_usando
+            else:
+                percent_usando = 0
+                percent_ocioso = 100
+
+            cpu_usage.append({
+                'Processador': cpu_usage_actual[i][0],
+                'Usando': percent_usando,
+                'Ocioso': percent_ocioso
+            })
+
+        return cpu_usage    
 
     def proc_info_sysinfo(self):
+        """Função vai Transformar a chama de sistema desorganizada em uma lista organizada de dados relevantes
+
+        Returns:
+            lista: lista de informações relevantes para o sistema
+        """
         proc_status = self.process_status_d(self)
 
         proc_info = []
@@ -240,9 +262,19 @@ class interpretador():
         return proc_info
 
     def qtd_proc_running_sysinfo(self):
+        """Função que retorna a quantidade de processos que estão rodando atualmente
+
+        Returns:
+            int: 333
+        """
         return len(self.list_proc_running_sysinfo(self))
 
     def qtd_threads_running(self):
+        """Função que retorna a quanitdade de threads que estão rodando
+
+        Returns:
+            int: 667
+        """
         total_threads = 0
         proc_info = self.proc_info_sysinfo(self)
 
@@ -265,8 +297,8 @@ def main ():
     # print("cpu_usage_since_boot_d:", interpretador.cpu_usage_since_boot_d())
     # print("interpretador.proc_memory_usage_d:", interpretador.proc_memory_usage_d(interpretador))
     # print("list_proc_running_sysinfo:", interpretador.list_proc_running_sysinfo(interpretador))
-    # print("cpu_usage_sysinfo:", interpretador.cpu_usage_sysinfo(interpretador))
-    print("proc_info_sysinfo:", interpretador.proc_info_sysinfo(interpretador))
+    print("cpu_usage_sysinfo:", interpretador.cpu_usage_sysinfo(interpretador)) # uso do processador 2.
+    # print("proc_info_sysinfo:", interpretador.proc_info_sysinfo(interpretador))
     # print("qtd_proc_running_sysinfo:", interpretador.qtd_proc_running_sysinfo(interpretador))
     # print("qtd_threads_running:", interpretador.qtd_threads_running(interpretador))
     
