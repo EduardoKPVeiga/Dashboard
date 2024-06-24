@@ -211,27 +211,18 @@ class interpretador():
         cpu_usage_prev = self.cpu_usage_since_boot_d()
         time.sleep(0.5)
         cpu_usage_actual = self.cpu_usage_since_boot_d()
-        
+
         cpu_usage = []
-
+    
         for i in range(len(cpu_usage_actual)):
-            user_diff = cpu_usage_actual[i][1] - cpu_usage_prev[i][1]
-            system_diff = cpu_usage_actual[i][2] - cpu_usage_prev[i][2]
-            total_diff = user_diff + system_diff
-            
-            if total_diff > 0:
-                percent_usando = (user_diff / total_diff) * 100
-                percent_ocioso = 100 - percent_usando
-            else:
-                percent_usando = 0
-                percent_ocioso = 100
-
+            cpu_usage_value = (cpu_usage_actual[i][1] - cpu_usage_prev[i][1]) / (cpu_usage_actual[i][2] - cpu_usage_prev[i][2])
+            cpu_usage_value = (1 - cpu_usage_value) * 100
+            # cpu_usage.append([cpu_usage_actual[i][0], ])
             cpu_usage.append({
                 'Processador': cpu_usage_actual[i][0],
-                'Usando': percent_usando,
-                'Ocioso': percent_ocioso
+                'Usando': cpu_usage_value,
+                'Ocioso': 100 - cpu_usage_value
             })
-
         return cpu_usage    
 
     def proc_info_sysinfo(self):

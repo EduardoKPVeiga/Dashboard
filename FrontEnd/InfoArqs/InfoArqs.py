@@ -62,7 +62,6 @@ class InfoArqs:
 
             nome = detalhes['Name'].split(" ")
             self.diretorio_atual = self.diretorio_atual + nome[0] +'/'
-            print("assim que fica:", self.diretorio_atual)
             self.atualizar_tabela(self.diretorio_atual)
 
     def atualizar_tabela(self, diretorio):
