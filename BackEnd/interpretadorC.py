@@ -143,10 +143,8 @@ class interpretador():
         texto = arquivo_binario.decode('utf-8')
         linhas = texto.split('\n')
         dicionario = {}
-        if linhas:
-            dicionario['header'] = linhas[0]
         
-        for i, linha in enumerate(linhas[1:], start=1):
+        for i, linha in enumerate(linhas[:], start=1):
             partes = linha.split()
             if len(partes) >= 9:
                 chave = f'{i}'
