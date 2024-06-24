@@ -1,18 +1,13 @@
 import tkinter as tk
 from tkinter import *
-from tkinter import ttk
-# from Menu.Menu import Menu
-# from BackEnd.interpretadorC import interpretador
 from FrontEnd.Menu import Menu
 
 class Controller:
+    """Função inicializa o software
+    """
     def __init__(self):
+        """Inicializa tk e deixa em loop
+        """
         self.Menu = tk.Tk()
         self.dash = Menu(self.Menu)
         self.Menu.mainloop()
-
-    # def Atualizando_Dados():
-    #     thread1 = threading.Thread(target=self.dados.buscaProcessos)
-        
-    #     thread1.start()
-
