@@ -186,7 +186,8 @@ class interpretador():
                     if chave in ['Name', 'State', 'Pid', 'PPid', 'Uid', 'Gid', 'VmSize', 'VmRSS', 'Threads', 'voluntary_ctxt_switches', 'nonvoluntary_ctxt_switches']:
                         info_processo[chave] = valor
             informacoes_importantes.append(info_processo)
-        return informacoes_importantes
+            informacoes_importantes_ordenadas = sorted(informacoes_importantes, key=lambda x: (x.get('Name', '').startswith('('), x.get('Name', '').lower()))            # print("Passou aqui:")
+        return informacoes_importantes_ordenadas
 
     def list_proc_running_sysinfo(self):
         """Função que vai listar os processos rodando atualmente
@@ -279,12 +280,12 @@ class interpretador():
 #     # print("memory_info_d:", interpretador.memory_info_d(interpretador))
 #     # print("version_info_d:", interpretador.version_info_d())
 #     # print("read_proc_ids_d:", interpretador.read_proc_ids_d())
-#     # lista = interpretador.process_status_d(interpretador)
-#     # primeiros_10_itens = lista[:2]
-#     # print("process_status_d:", interpretador.filtrando_dados_process(primeiros_10_itens))
+#     lista = interpretador.process_status_d(interpretador)
+#     primeiros_10_itens = lista[:5]
+#     print("process_status_d:", interpretador.filtrando_dados_process(primeiros_10_itens))
 #     # print("cpu_usage_since_boot_d:", interpretador.cpu_usage_since_boot_d())
 #     # print("interpretador.proc_memory_usage_d:", interpretador.proc_memory_usage_d(interpretador))
-#     print("list_proc_running_sysinfo:", interpretador.list_proc_running_sysinfo(interpretador))
+#     # print("list_proc_running_sysinfo:", interpretador.list_proc_running_sysinfo(interpretador))
 #     # print("cpu_usage_sysinfo:", interpretador.cpu_usage_sysinfo(interpretador)) # uso do processador 2.
 #     # print("proc_info_sysinfo:", interpretador.proc_info_sysinfo(interpretador))
 #     # print("qtd_proc_running_sysinfo:", interpretador.qtd_proc_running_sysinfo(interpretador))
