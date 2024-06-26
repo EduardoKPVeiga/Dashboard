@@ -62,7 +62,6 @@ class InfoArqs:
 
             nome = detalhes['Name'].split(" ")
             self.diretorio_atual = self.diretorio_atual + nome[0] +'/'
-            print("assim que fica:", self.diretorio_atual)
             self.atualizar_tabela(self.diretorio_atual)
 
     def atualizar_tabela(self, diretorio):
@@ -74,11 +73,7 @@ class InfoArqs:
         for item in self.tabela.get_children():
             self.tabela.delete(item)
 
-        var = 1
         for chave, detalhes in self.dados.items():
-            if var == 1:
-                var = 0
-                continue
             if detalhes['Mode'][0] != 'd':
                 self.tabela.insert('', 'end', text=chave,tags=('Arquivo',), values=(
                     detalhes['Name'],
@@ -104,7 +99,6 @@ class InfoArqs:
     def voltar_diretorio(self):
         """Função do botão para retornar o diretório anterior
         """
-        print("self.diretorio_atual:",self.diretorio_atual)
         if self.diretorio_atual != "/":
             partes = self.diretorio_atual.rstrip('/').split('/')
             self.diretorio_atual = '/' if len(partes) == 1 else '/'.join(partes[:-1]) + '/'

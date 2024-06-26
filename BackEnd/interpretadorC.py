@@ -143,10 +143,8 @@ class interpretador():
         texto = arquivo_binario.decode('utf-8')
         linhas = texto.split('\n')
         dicionario = {}
-        if linhas:
-            dicionario['header'] = linhas[0]
         
-        for i, linha in enumerate(linhas[1:], start=1):
+        for i, linha in enumerate(linhas[:], start=1):
             partes = linha.split()
             if len(partes) >= 9:
                 chave = f'{i}'
@@ -188,7 +186,8 @@ class interpretador():
                     if chave in ['Name', 'State', 'Pid', 'PPid', 'Uid', 'Gid', 'VmSize', 'VmRSS', 'Threads', 'voluntary_ctxt_switches', 'nonvoluntary_ctxt_switches']:
                         info_processo[chave] = valor
             informacoes_importantes.append(info_processo)
-        return informacoes_importantes
+            informacoes_importantes_ordenadas = sorted(informacoes_importantes, key=lambda x: (x.get('Name', '').startswith('('), x.get('Name', '').lower()))            # print("Passou aqui:")
+        return informacoes_importantes_ordenadas
 
     def list_proc_running_sysinfo(self):
         """Função que vai listar os processos rodando atualmente
@@ -213,27 +212,18 @@ class interpretador():
         cpu_usage_prev = self.cpu_usage_since_boot_d()
         time.sleep(0.5)
         cpu_usage_actual = self.cpu_usage_since_boot_d()
-        
+
         cpu_usage = []
-
+    
         for i in range(len(cpu_usage_actual)):
-            user_diff = cpu_usage_actual[i][1] - cpu_usage_prev[i][1]
-            system_diff = cpu_usage_actual[i][2] - cpu_usage_prev[i][2]
-            total_diff = user_diff + system_diff
-            
-            if total_diff > 0:
-                percent_usando = (user_diff / total_diff) * 100
-                percent_ocioso = 100 - percent_usando
-            else:
-                percent_usando = 0
-                percent_ocioso = 100
-
+            cpu_usage_value = (cpu_usage_actual[i][1] - cpu_usage_prev[i][1]) / (cpu_usage_actual[i][2] - cpu_usage_prev[i][2])
+            cpu_usage_value = (1 - cpu_usage_value) * 100
+            # cpu_usage.append([cpu_usage_actual[i][0], ])
             cpu_usage.append({
                 'Processador': cpu_usage_actual[i][0],
-                'Usando': percent_usando,
-                'Ocioso': percent_ocioso
+                'Usando': cpu_usage_value,
+                'Ocioso': 100 - cpu_usage_value
             })
-
         return cpu_usage    
 
     def proc_info_sysinfo(self):
@@ -290,12 +280,12 @@ class interpretador():
 #     # print("memory_info_d:", interpretador.memory_info_d(interpretador))
 #     # print("version_info_d:", interpretador.version_info_d())
 #     # print("read_proc_ids_d:", interpretador.read_proc_ids_d())
-#     # lista = interpretador.process_status_d(interpretador)
-#     # primeiros_10_itens = lista[:2]
-#     # print("process_status_d:", interpretador.filtrando_dados_process(primeiros_10_itens))
+#     lista = interpretador.process_status_d(interpretador)
+#     primeiros_10_itens = lista[:5]
+#     print("process_status_d:", interpretador.filtrando_dados_process(primeiros_10_itens))
 #     # print("cpu_usage_since_boot_d:", interpretador.cpu_usage_since_boot_d())
 #     # print("interpretador.proc_memory_usage_d:", interpretador.proc_memory_usage_d(interpretador))
-#     print("list_proc_running_sysinfo:", interpretador.list_proc_running_sysinfo(interpretador))
+#     # print("list_proc_running_sysinfo:", interpretador.list_proc_running_sysinfo(interpretador))
 #     # print("cpu_usage_sysinfo:", interpretador.cpu_usage_sysinfo(interpretador)) # uso do processador 2.
 #     # print("proc_info_sysinfo:", interpretador.proc_info_sysinfo(interpretador))
 #     # print("qtd_proc_running_sysinfo:", interpretador.qtd_proc_running_sysinfo(interpretador))
