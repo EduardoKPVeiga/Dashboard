@@ -100,7 +100,13 @@ class interpretador():
         cpu_usage_list = cpu_usage.split("\n")
         cpu_usage_matrix = []
 
-        for i in range(9):
+        num_of_cpu = 0
+        cpu_info = ((_sys.read_sys_info("/proc/stat".encode('utf-8'), (8 * 1024))).decode('utf-8')).split("\n")
+        for item in cpu_info:
+            if "cpu" in item:
+                num_of_cpu += 1
+
+        for i in range(num_of_cpu):
             cpu_usage_matrix.append(cpu_usage_list[i].split(" "))
         cpu_usage_matrix[0].pop(1)
 
@@ -114,7 +120,6 @@ class interpretador():
             for i in range(1,8):
                 total_time += int(line[i])
             cpu_usage_calc.append([line[0], int(line[4]), total_time])
-
         return cpu_usage_calc
     
     def proc_memory_usage_d(self):
