@@ -1,6 +1,14 @@
 import ctypes
 import time
-_sys = ctypes.CDLL("./BackEnd/Arquivos_C/sys_call.so")  
+import re
+
+_sys = ctypes.CDLL("./BackEnd/Arquivos_C/sys_call.so")
+
+def replace_multiple_chars(input_string, char):
+    # Use re.sub() to replace multiple identical characters with a single one
+    pattern = f'{char}+'
+    result = re.sub(pattern, char, input_string)
+    return result
 
 class interpretador():
     """Função que vai Interepretar o codigo em C e filtrar os dados em dicionários e listas
@@ -45,8 +53,9 @@ class interpretador():
     def version_info_d():
         """Função que vai retornar a Versão do sistema
         """
-        _sys.version_info.restype = ctypes.c_char_p
-        return _sys.version_info()
+        _sys.read_sys_info.restype = ctypes.c_char_p
+        _sys.read_sys_info.argtypes = [ctypes.c_char_p, ctypes.c_uint32]
+        return ((_sys.read_sys_info(("/proc/version").encode("utf-8"), 2 * 1024)).decode('utf-8')).split(",")
     
     def read_proc_ids_d():
         """Função que vai retornar uma lista de ids dos processadores
@@ -279,6 +288,24 @@ class interpretador():
                     total_threads += int(item[1])
 
         return total_threads
+
+    def partitions_info():
+        """Função que vai retornar uma matrix com os dados das particoes
+        """
+        _sys.read_sys_info.restype = ctypes.c_char_p
+        _sys.read_sys_info.argtypes = [ctypes.c_char_p, ctypes.c_uint32]
+
+        partitions = []
+        part_info = ((_sys.read_sys_info("/proc/partitions".encode('utf-8'), (16 * 1024))).decode('utf-8')).split("\n")
+
+        for part_line in part_info:
+            part_line_aux = replace_multiple_chars(part_line, ' ')
+            if "#blocks" not in part_line_aux:
+                if len(part_line_aux) > 1:
+                    part_line_aux = part_line_aux.replace(" ", "", 1)
+                    partitions.append(part_line_aux.split(" "))
+                
+        return partitions
     
 # def main ():
 #     # print("clk_per_second_d:", interpretador.clk_per_second_d())
