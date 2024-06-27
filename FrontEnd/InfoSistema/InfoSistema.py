@@ -18,6 +18,10 @@ class InfoSistema:
     def atualizar_label(self):
         """Função que vai atualizar os labels a cada 5 segundos, das informações do sistema
         """
-        dados = interpretador.version_info_d()
-        self.label.config(text=f"Dados do sistema: {dados}")
-        self.janela.after(5000, self.atualizar_label)
+        try:
+            dados = interpretador.version_info_d()
+            self.label.config(text=f"Dados do sistema: {dados}")
+            if self.label.winfo_exists():
+                self.janela.after(5000, self.atualizar_label)
+        except Exception:
+            print(f"A troca de contexto ocasionou um erro na atualização de dados em InfoSistema")

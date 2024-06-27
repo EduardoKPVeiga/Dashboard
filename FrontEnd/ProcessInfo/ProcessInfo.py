@@ -37,30 +37,37 @@ class ProcessInfo:
         
     def atualizar_tabela(self):
         """Atualiza a tabela a cada 5 segundos."""
-        for item in self.tabela.get_children():
-            self.tabela.delete(item)
-
-        # Obtém os dados dos processos
-        lista = interpretador.process_status_d(interpretador)
-        self.dados = interpretador.filtrando_dados_process(lista)       
-
-        for processo in self.dados:
-            # Certifica-se de que todos os campos necessários estão presentes e não são None
-            valores = (
-                processo.get('Name', ''),
-                processo.get('State', ''),
-                processo.get('Pid', ''),
-                processo.get('PPid', ''),
-                processo.get('Uid', ''),
-                processo.get('Gid', ''),
-                processo.get('VmSize', ''),
-                processo.get('VmRSS', ''),
-                processo.get('voluntary_ctxt_switches', ''),
-                processo.get('nonvoluntary_ctxt_switches', '')
-            )
-            # Insere os valores na tabela
-            self.tabela.insert('', 'end', values=valores)
         
-        # Empacota a tabela na janela e agenda a atualização novamente após 5 segundos
-        self.tabela.pack(padx=10, pady=10, expand=True, fill='both')
-        self.janela.after(5000, self.atualizar_tabela)
+        try:
+            if self.tabela:
+                for item in self.tabela.get_children():
+                    self.tabela.delete(item)
+
+            # Obtém os dados dos processos
+            lista = interpretador.process_status_d(interpretador)
+            self.dados = interpretador.filtrando_dados_process(lista)       
+
+            for processo in self.dados:
+                # Certifica-se de que todos os campos necessários estão presentes e não são None
+                valores = (
+                    processo.get('Name', ''),
+                    processo.get('State', ''),
+                    processo.get('Pid', ''),
+                    processo.get('PPid', ''),
+                    processo.get('Uid', ''),
+                    processo.get('Gid', ''),
+                    processo.get('VmSize', ''),
+                    processo.get('VmRSS', ''),
+                    processo.get('voluntary_ctxt_switches', ''),
+                    processo.get('nonvoluntary_ctxt_switches', '')
+                )
+                # Insere os valores na tabela
+                self.tabela.insert('', 'end', values=valores)
+
+        
+            # Empacota a tabela na janela e agenda a atualização novamente após 5 segundos
+            self.tabela.pack(padx=10, pady=10, expand=True, fill='both')
+            if self.tabela.winfo_exists():
+                self.janela.after(5000, self.atualizar_tabela)
+        except Exception:
+            print(f"A troca de contexto ocasionou um erro na atualização de dados em ProcessInfo")

@@ -22,12 +22,16 @@ class MemInfo:
         """Função que vai atualizar a cada 5 segundos a tabela
         """
         self.dados = interpretador.memory_info_d(interpretador)
-        for item in self.tabela.get_children():
-            self.tabela.delete(item)
+        try:
+            for item in self.tabela.get_children():
+                self.tabela.delete(item)
 
-        for item in self.dados:
-            self.tabela.insert('', 'end', values=item)
-            
-        self.janela.after(5000, self.atualizar_tabela)
+
+            for item in self.dados:
+                self.tabela.insert('', 'end', values=item)
+            if self.tabela.winfo_exists():
+                self.janela.after(5000, self.atualizar_tabela)
+        except Exception:
+            print(f"A troca de contexto ocasionou um erro na atualização de dados em MemInfo")
             
             

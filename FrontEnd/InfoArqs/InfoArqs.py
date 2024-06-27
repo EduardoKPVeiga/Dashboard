@@ -70,30 +70,36 @@ class InfoArqs:
             diretorio (string): recebe o diretorio que vai atualizar a tabela
         """
         self.dados = interpretador.directory_info_py_to_dictionary(interpretador, diretorio)
-        for item in self.tabela.get_children():
-            self.tabela.delete(item)
+        try:
+            for item in self.tabela.get_children():
+                self.tabela.delete(item)
+        except Exception:
+            print(f"Não foi possível remover os itens da tabela de Arquivos")
 
-        for chave, detalhes in self.dados.items():
-            if detalhes['Mode'][0] != 'd':
-                self.tabela.insert('', 'end', text=chave,tags=('Arquivo',), values=(
-                    detalhes['Name'],
-                    detalhes['Links'],
-                    detalhes['Owner'],
-                    detalhes['Group'],
-                    detalhes['Size'],
-                    detalhes['Last Modified'],
-                    detalhes['Mode'],
-                ))
-            else:
-                self.tabela.insert('', 'end', text=chave,tags=('Diretorio',), values=(
-                    detalhes['Name'],
-                    detalhes['Links'],
-                    detalhes['Owner'],
-                    detalhes['Group'],
-                    detalhes['Size'],
-                    detalhes['Last Modified'],
-                    detalhes['Mode'],
-                ))
+        try:
+            for chave, detalhes in self.dados.items():
+                if detalhes['Mode'][0] != 'd':
+                    self.tabela.insert('', 'end', text=chave,tags=('Arquivo',), values=(
+                        detalhes['Name'],
+                        detalhes['Links'],
+                        detalhes['Owner'],
+                        detalhes['Group'],
+                        detalhes['Size'],
+                        detalhes['Last Modified'],
+                        detalhes['Mode'],
+                    ))
+                else:
+                    self.tabela.insert('', 'end', text=chave,tags=('Diretorio',), values=(
+                        detalhes['Name'],
+                        detalhes['Links'],
+                        detalhes['Owner'],
+                        detalhes['Group'],
+                        detalhes['Size'],
+                        detalhes['Last Modified'],
+                        detalhes['Mode'],
+                    ))
+        except Exception:
+            print(f"Não foi possível inserir os itens da tabela de Arquivos")
 
         
     def voltar_diretorio(self):
@@ -108,4 +114,5 @@ class InfoArqs:
         """Função para atualizar a cada 5 segundos
         """
         self.atualizar_tabela(self.diretorio_atual)
-        self.janela.after(5000, self.atualizar_periodicamente)
+        if self.tabela.winfo_exists():
+            self.janela.after(5000, self.atualizar_periodicamente)

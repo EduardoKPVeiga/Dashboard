@@ -96,7 +96,7 @@ class interpretador():
         """
         _sys.read_sys_info.restype = ctypes.c_char_p
         _sys.read_sys_info.argtypes = [ctypes.c_char_p, ctypes.c_uint32]
-        cpu_usage = (_sys.read_sys_info("/proc/stat".encode('utf-8'), (4 * 1024))).decode('utf-8')
+        cpu_usage = (_sys.read_sys_info("/proc/stat".encode('utf-8'), (4 * 2048))).decode('utf-8')
         cpu_usage_list = cpu_usage.split("\n")
         cpu_usage_matrix = []
 

@@ -22,11 +22,11 @@ class Menu:
         self.janela.geometry("1500x800")
 
         menu_bar = tk.Menu(self.janela)
-        menu_bar.add_command(label="Infos Arquivos", command=self.mostrar_infos_arquivos)
-        menu_bar.add_command(label="Infos Sistmema", command=self.mostrar_infos_sistema)
-        menu_bar.add_command(label="Mem Infos", command=self.mostrar_mem_infos)
-        menu_bar.add_command(label="Process Infos", command=self.mostrar_process_infos)
-        menu_bar.add_command(label="Info Processador", command=self.mostrar_info_processador)
+        menu_bar.add_command(label="Informação de Sistmema", command=self.mostrar_infos_sistema)
+        menu_bar.add_command(label="Gerenciador de Arquivos", command=self.mostrar_infos_arquivos)
+        menu_bar.add_command(label="Informação de Memoria", command=self.mostrar_mem_infos)
+        menu_bar.add_command(label="Gerenciador de Processos", command=self.mostrar_process_infos)
+        menu_bar.add_command(label="Informação de processos", command=self.mostrar_info_processador)
         
         self.janela.config(menu=menu_bar)
 
