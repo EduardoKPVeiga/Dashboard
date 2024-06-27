@@ -55,7 +55,7 @@ class interpretador():
         """
         _sys.read_sys_info.restype = ctypes.c_char_p
         _sys.read_sys_info.argtypes = [ctypes.c_char_p, ctypes.c_uint32]
-        return ((_sys.read_sys_info("/proc/version", 2 * 1024)).decode('utf-8')).split(",")
+        return ((_sys.read_sys_info(("/proc/version").encode("utf-8"), 2 * 1024)).decode('utf-8')).split(",")
     
     def read_proc_ids_d():
         """Função que vai retornar uma lista de ids dos processadores
@@ -298,13 +298,12 @@ class interpretador():
         partitions = []
         part_info = ((_sys.read_sys_info("/proc/partitions".encode('utf-8'), (16 * 1024))).decode('utf-8')).split("\n")
 
-        print("========================================================")
         for part_line in part_info:
             part_line_aux = replace_multiple_chars(part_line, ' ')
-            
-            if len(part_line_aux) > 1:
-                part_line_aux = part_line_aux.replace(" ", "", 1)
-                partitions.append(part_line_aux.split(" "))
+            if "#blocks" not in part_line_aux:
+                if len(part_line_aux) > 1:
+                    part_line_aux = part_line_aux.replace(" ", "", 1)
+                    partitions.append(part_line_aux.split(" "))
                 
         return partitions
     
